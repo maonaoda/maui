@@ -34,7 +34,7 @@ namespace Microsoft.Maui
 			return !obj.IsDisposed();
 		}
 
-		public static TResult? TryJavaCast<[DynamicallyAccessedMembers (Constructors)] TResult>(this IJavaObject? instance)
+		public static TResult? TryJavaCast<[DynamicallyAccessedMembers(Constructors)] TResult>(this IJavaObject? instance)
 			where TResult : class, IJavaObject
 		{
 			try
