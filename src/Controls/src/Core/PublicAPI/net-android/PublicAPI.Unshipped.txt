@@ -138,7 +138,6 @@ static readonly Microsoft.Maui.Controls.HybridWebView.DefaultFileProperty -> Mic
 static readonly Microsoft.Maui.Controls.HybridWebView.HybridRootProperty -> Microsoft.Maui.Controls.BindableProperty!
 override Microsoft.Maui.Controls.TitleBar.OnApplyTemplate() -> void
 static Microsoft.Maui.Controls.TitleBar.DefaultTemplate.get -> Microsoft.Maui.Controls.ControlTemplate!
-static Microsoft.Maui.Controls.TabbedPage.MapUpdateOffscreenPageLimit(Microsoft.Maui.Handlers.ITabbedViewHandler! handler, Microsoft.Maui.Controls.TabbedPage! view) -> void
 static readonly Microsoft.Maui.Controls.KeyboardAccelerator.KeyProperty -> Microsoft.Maui.Controls.BindableProperty!
 static readonly Microsoft.Maui.Controls.KeyboardAccelerator.ModifiersProperty -> Microsoft.Maui.Controls.BindableProperty!
 static readonly Microsoft.Maui.Controls.DragGestureRecognizer.CanDragProperty -> Microsoft.Maui.Controls.BindableProperty!
