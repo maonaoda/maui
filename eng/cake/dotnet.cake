@@ -6,6 +6,9 @@ var ext = IsRunningOnWindows() ? ".exe" : "";
 var dotnetPath = $"./.dotnet/dotnet{ext}";
 string configuration = GetBuildVariable("configuration", GetBuildVariable("BUILD_CONFIGURATION", "DEBUG"));
 var localDotnet = GetBuildVariable("workloads", "local") == "local";
+
+Information("localDotnet" + ":" + localDotnet);
+
 var vsVersion = GetBuildVariable("VS", "");
 string MSBuildExe = Argument("msbuild", EnvironmentVariable("MSBUILD_EXE", ""));
 string nugetSource = Argument("nugetsource", "");
@@ -111,7 +114,7 @@ Task("dotnet-local-workloads")
 
 Task("dotnet-buildtasks")
     .WithCriteria(Argument<string>("sln", null) == null)
-    .IsDependentOn("dotnet")
+    //.IsDependentOn("dotnet")
     .Does(() =>
     {
         RunMSBuildWithDotNet($"{rootFolder}/Microsoft.Maui.BuildTasks.slnf");
@@ -154,7 +157,7 @@ Task("android-aar")
     });
 
 Task("dotnet-build")
-    .IsDependentOn("dotnet")
+    //.IsDependentOn("dotnet")
     .IsDependentOn("dotnet-buildtasks")
     .IsDependentOn("android-aar")
     .Description("Build the solutions")
@@ -269,7 +272,7 @@ Task("dotnet-integration-test")
     });
 
 Task("dotnet-test")
-    .IsDependentOn("dotnet")
+    //.IsDependentOn("dotnet")
     .Description("Build the solutions")
     .Does(() =>
     {
@@ -422,7 +425,7 @@ Task("dotnet-pack")
     .IsDependentOn("dotnet-pack-docs");
 
 Task("dotnet-build-test")
-    .IsDependentOn("dotnet")
+    //.IsDependentOn("dotnet")
     .IsDependentOn("dotnet-buildtasks")
     .IsDependentOn("dotnet-build")
     .IsDependentOn("dotnet-test");
@@ -514,7 +517,7 @@ Task("dotnet-diff")
 Task("VSCode")
     .Description("Provisions .NET, and launches an instance of Visual Studio Code using it.")
     .IsDependentOn("Clean")
-    .IsDependentOn("dotnet")
+    //.IsDependentOn("dotnet")
     .IsDependentOn("dotnet-buildtasks")
     .IsDependentOn("dotnet-pack") // Run conditionally
     .Does(() =>
@@ -534,7 +537,7 @@ Task("VSCode")
 Task("VS")
     .Description("Provisions .NET, and launches an instance of Visual Studio using it.")
     .IsDependentOn("Clean")
-    .IsDependentOn("dotnet")
+    //.IsDependentOn("dotnet")
     .IsDependentOn("dotnet-buildtasks")
     .IsDependentOn("dotnet-pack") // Run conditionally 
     .Does(() =>
@@ -580,6 +583,8 @@ Dictionary<string, string> GetDotNetEnvironmentVariables()
     Dictionary<string, string> envVariables = new Dictionary<string, string>();
     var dotnet = MakeAbsolute(Directory("./.dotnet/")).ToString();
 
+    Information("GetDotNetEnvironmentVariables");
+
     envVariables.Add("DOTNET_INSTALL_DIR", dotnet);
     envVariables.Add("DOTNET_ROOT", dotnet);
     envVariables.Add("DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR", dotnet);
@@ -599,7 +604,13 @@ Dictionary<string, string> GetDotNetEnvironmentVariables()
 
 void SetDotNetEnvironmentVariables(string dotnetDir = null)
 {
+    Information("SetDotNetEnvironmentVariables");
+
     var dotnet = dotnetDir ?? MakeAbsolute(Directory("./.dotnet/")).ToString();
+
+    Information("dotnet: " + dotnet);
+    //dotnet = "/usr/local/share/dotnet";
+    Information("dotnet: " + dotnet);
     
     SetEnvironmentVariable("VSDebugger_ValidateDotnetDebugLibSignatures", "0");
     SetEnvironmentVariable("DOTNET_INSTALL_DIR", dotnet);
@@ -753,6 +764,8 @@ void RunMSBuildWithDotNet(
 
         if (!string.IsNullOrEmpty(targetFramework))
             args.Append($"-f {targetFramework}");
+
+        args.Append($"/p:PackageVersion=9.0.0-custom-20241114.1");
     
         return args;
     };
