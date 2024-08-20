@@ -17,6 +17,11 @@ namespace Microsoft.Maui.Controls
 		// _originalImage and _originalImageSize are used to ensure we don't resize the image larger than the original image size
 		// and to ensure if a new image is loaded, we use that image's size for resizing.
 		CGImage _originalCGImage = null;
+
+#pragma warning disable RS0016 // Add public types and members to the declared API
+		public bool ChangeImagePositionToFurthestRight;
+#pragma warning restore RS0016 // Add public types and members to the declared API
+
 		CGSize _originalImageSize = CGSize.Empty;
 
 		/// <summary>
@@ -248,6 +253,16 @@ namespace Microsoft.Maui.Controls
 				{
 					imageInsets.Left += (titleWidth / 2) + sharedSpacing;
 					imageInsets.Right -= (titleWidth / 2) + sharedSpacing;
+
+					if(ChangeImagePositionToFurthestRight)
+					{
+						#region    ============================workaround for kenshin here============================
+						var buttonWidth = new System.Runtime.InteropServices.NFloat(Math.Max(button.Bounds.Width, platformButton.Bounds.Width));
+						imageInsets.Right = 20;
+						imageInsets.Left = buttonWidth - 20 - imageWidth;
+						imageWidth = 0;
+						#endregion ============================workaround for kenshin here============================
+					}
 
 					titleInsets.Left -= (imageWidth / 2) + sharedSpacing;
 					titleInsets.Right += (imageWidth / 2) + sharedSpacing;
