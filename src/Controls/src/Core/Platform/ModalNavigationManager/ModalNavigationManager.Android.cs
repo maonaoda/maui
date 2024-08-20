@@ -263,6 +263,14 @@ namespace Microsoft.Maui.Controls.Platform
 					dialog.Window.SetSoftInputMode(attributes.SoftInputMode);
 				}
 
+				// Set BarColor to Transparent
+				dialog.Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
+				dialog.Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
+#pragma warning disable CA1422 // Validate platform compatibility
+				dialog.Window.SetStatusBarColor(AColor.Transparent);
+				dialog.Window.SetNavigationBarColor(AColor.Transparent);
+#pragma warning restore CA1422 // Validate platform compatibility
+
 				return dialog;
 			}
 
