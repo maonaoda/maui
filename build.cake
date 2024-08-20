@@ -42,7 +42,9 @@ if(String.IsNullOrWhiteSpace(target))
 // TASK TARGETS
 //////////////////////////////////////////////////////////////////////
 
-Task("Default").IsDependentOn("dotnet").IsDependentOn("dotnet-pack");
+Task("Default")
+.IsDependentOn("dotnet")
+.IsDependentOn("dotnet-pack");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION
