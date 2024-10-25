@@ -154,7 +154,7 @@ Task("android-aar")
     });
 
 Task("dotnet-build")
-    .IsDependentOn("dotnet")
+    //.IsDependentOn("dotnet")
     .IsDependentOn("dotnet-buildtasks")
     .IsDependentOn("android-aar")
     .Description("Build the solutions")

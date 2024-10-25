@@ -11,9 +11,9 @@
     <SignAssembly>false</SignAssembly>
     <MauiRootDirectory>$(MSBuildThisFileDirectory)</MauiRootDirectory>
     <MauiSrcDirectory>$(MSBuildThisFileDirectory)src/</MauiSrcDirectory>
-    <IncludePreviousTfms>false</IncludePreviousTfms>
-    <IncludePreviousTfmsEssentials>false</IncludePreviousTfmsEssentials>
-    <IncludePreviousTfmsGraphics>false</IncludePreviousTfmsGraphics>
+    <IncludePreviousTfms>true</IncludePreviousTfms>
+    <IncludePreviousTfmsEssentials>true</IncludePreviousTfmsEssentials>
+    <IncludePreviousTfmsGraphics>true</IncludePreviousTfmsGraphics>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -145,11 +145,11 @@
     <Windows2TargetFrameworkVersion>10.0.20348.0</Windows2TargetFrameworkVersion>
     <TizenTargetFrameworkVersion>7.0</TizenTargetFrameworkVersion>
     <!-- Previous .NET -->
-    <IosPreviousTargetFrameworkVersion>17.5</IosPreviousTargetFrameworkVersion>
-    <TvosPreviousTargetFrameworkVersion>17.5</TvosPreviousTargetFrameworkVersion>
-    <MacCatalystPreviousTargetFrameworkVersion>17.5</MacCatalystPreviousTargetFrameworkVersion>
+    <IosPreviousTargetFrameworkVersion>17.0</IosPreviousTargetFrameworkVersion>
+    <TvosPreviousTargetFrameworkVersion>17.0</TvosPreviousTargetFrameworkVersion>
+    <MacCatalystPreviousTargetFrameworkVersion>17.0</MacCatalystPreviousTargetFrameworkVersion>
     <MacosPreviousTargetFrameworkVersion>14.5</MacosPreviousTargetFrameworkVersion>
-    <AndroidPreviousTargetFrameworkVersion>35.0</AndroidPreviousTargetFrameworkVersion>
+    <AndroidPreviousTargetFrameworkVersion>34.0</AndroidPreviousTargetFrameworkVersion>
     <WindowsPreviousTargetFrameworkVersion>10.0.19041.0</WindowsPreviousTargetFrameworkVersion>
     <Windows2PreviousTargetFrameworkVersion>10.0.20348.0</Windows2PreviousTargetFrameworkVersion>
     <TizenPreviousTargetFrameworkVersion>7.0</TizenPreviousTargetFrameworkVersion>
