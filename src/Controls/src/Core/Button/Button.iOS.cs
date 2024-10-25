@@ -14,6 +14,10 @@ namespace Microsoft.Maui.Controls
 {
 	public partial class Button : ICrossPlatformLayout
 	{
+#pragma warning disable RS0016 // Add public types and members to the declared API
+		public bool ChangeImagePositionToFurthestRight;
+#pragma warning restore RS0016 // Add public types and members to the declared API
+
 		CGSize _originalImageSize = CGSize.Empty;
 
 		// _isFirstMeasure is a flag to make sure we manually recalculate the titleRect when there are dynamic changes to the button.
@@ -257,6 +261,16 @@ namespace Microsoft.Maui.Controls
 				{
 					imageInsets.Left += (titleWidth / 2) + sharedSpacing;
 					imageInsets.Right -= (titleWidth / 2) + sharedSpacing;
+
+					if(ChangeImagePositionToFurthestRight)
+					{
+						#region    ============================workaround for kenshin here============================
+						var buttonWidth = new System.Runtime.InteropServices.NFloat(Math.Max(button.Bounds.Width, platformButton.Bounds.Width));
+						imageInsets.Right = 20;
+						imageInsets.Left = buttonWidth - 20 - imageWidth;
+						imageWidth = 0;
+						#endregion ============================workaround for kenshin here============================
+					}
 
 					titleInsets.Left -= (imageWidth / 2) + sharedSpacing;
 					titleInsets.Right += (imageWidth / 2) + sharedSpacing;
