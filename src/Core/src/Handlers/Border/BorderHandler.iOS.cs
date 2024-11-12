@@ -2,6 +2,7 @@
 using System.Formats.Asn1;
 using System.Linq;
 using CoreAnimation;
+using Foundation;
 using Microsoft.Maui.Graphics;
 using UIKit;
 using PlatformView = UIKit.UIView;
@@ -62,17 +63,26 @@ namespace Microsoft.Maui.Handlers
 						TranslatesAutoresizingMaskIntoConstraints = false 
 					};
 
-					platformContent.Tag = ContentView.ContentTag;
+					platformContent.TranslatesAutoresizingMaskIntoConstraints = false;
+
+					containerView.Tag = ContentView.ContentTag;
 					containerView.AddSubview(platformContent);
 					platformView.AddSubview(containerView);
 
-					NSLayoutConstraint.ActivateConstraints(
-					[
-						containerView.TopAnchor.ConstraintEqualTo(platformView.TopAnchor),
-						containerView.LeadingAnchor.ConstraintEqualTo(platformView.LeadingAnchor),
-						containerView.TrailingAnchor.ConstraintEqualTo(platformView.TrailingAnchor),
-						containerView.BottomAnchor.ConstraintEqualTo(platformView.BottomAnchor)
-					]);
+					var padding = handler.VirtualView.Padding;
+					var strokeThickness = handler.VirtualView.StrokeThickness;
+					NSLayoutConstraint.ActivateConstraints(new[]
+			  		{
+						containerView.TopAnchor.ConstraintEqualTo(platformView.TopAnchor, (nfloat)padding.Top + (nfloat)strokeThickness),
+						containerView.LeadingAnchor.ConstraintEqualTo(platformView.LeadingAnchor, (nfloat)padding.Left + (nfloat)strokeThickness),
+						containerView.TrailingAnchor.ConstraintEqualTo(platformView.TrailingAnchor, -(nfloat)padding.Right - (nfloat)strokeThickness),
+						containerView.BottomAnchor.ConstraintEqualTo(platformView.BottomAnchor, -(nfloat)padding.Bottom - (nfloat)strokeThickness),
+
+						platformContent.TopAnchor.ConstraintEqualTo(containerView.TopAnchor),
+						platformContent.LeadingAnchor.ConstraintEqualTo(containerView.LeadingAnchor),
+						platformContent.TrailingAnchor.ConstraintEqualTo(containerView.TrailingAnchor),
+						platformContent.BottomAnchor.ConstraintEqualTo(containerView.BottomAnchor)
+					});
 				}
 				else
 				{
