@@ -68,15 +68,15 @@ namespace Microsoft.Maui.Handlers
 					var strokeThickness = handler.VirtualView.StrokeThickness;
 					NSLayoutConstraint.ActivateConstraints(new[]
 			  		{
-						containerView.TopAnchor.ConstraintEqualTo(platformView.TopAnchor, (nfloat)padding.Top + (nfloat)strokeThickness),
-						containerView.LeadingAnchor.ConstraintEqualTo(platformView.LeadingAnchor, (nfloat)padding.Left + (nfloat)strokeThickness),
-						containerView.TrailingAnchor.ConstraintEqualTo(platformView.TrailingAnchor, -(nfloat)padding.Right - (nfloat)strokeThickness),
-						containerView.BottomAnchor.ConstraintEqualTo(platformView.BottomAnchor, -(nfloat)padding.Bottom - (nfloat)strokeThickness),
+						containerView.TopAnchor.ConstraintEqualTo(platformView.TopAnchor),
+						containerView.LeadingAnchor.ConstraintEqualTo(platformView.LeadingAnchor),
+						containerView.TrailingAnchor.ConstraintEqualTo(platformView.TrailingAnchor),
+						containerView.BottomAnchor.ConstraintEqualTo(platformView.BottomAnchor),
 
-						platformContent.TopAnchor.ConstraintEqualTo(containerView.TopAnchor),
-						platformContent.LeadingAnchor.ConstraintEqualTo(containerView.LeadingAnchor),
-						platformContent.TrailingAnchor.ConstraintEqualTo(containerView.TrailingAnchor),
-						platformContent.BottomAnchor.ConstraintEqualTo(containerView.BottomAnchor)
+						platformContent.TopAnchor.ConstraintEqualTo(containerView.TopAnchor, (nfloat)padding.Top + (nfloat)strokeThickness),
+						platformContent.LeadingAnchor.ConstraintEqualTo(containerView.LeadingAnchor, (nfloat)padding.Left + (nfloat)strokeThickness),
+						platformContent.TrailingAnchor.ConstraintEqualTo(containerView.TrailingAnchor, -(nfloat)padding.Right - (nfloat)strokeThickness),
+						platformContent.BottomAnchor.ConstraintEqualTo(containerView.BottomAnchor, -(nfloat)padding.Bottom - (nfloat)strokeThickness)
 					});
 				}
 				else
