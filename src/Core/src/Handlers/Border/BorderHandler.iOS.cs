@@ -54,30 +54,12 @@ namespace Microsoft.Maui.Handlers
 				{
 					var containerView = new UIView
 					{
-						BackgroundColor = UIColor.Clear,
-						TranslatesAutoresizingMaskIntoConstraints = false 
+						AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth
 					};
-
-					platformContent.TranslatesAutoresizingMaskIntoConstraints = false;
 
 					containerView.Tag = ContentView.ContentTag;
 					containerView.AddSubview(platformContent);
 					platformView.AddSubview(containerView);
-
-					var padding = handler.VirtualView.Padding;
-					var strokeThickness = handler.VirtualView.StrokeThickness;
-					NSLayoutConstraint.ActivateConstraints(new[]
-			  		{
-						containerView.TopAnchor.ConstraintEqualTo(platformView.TopAnchor),
-						containerView.LeadingAnchor.ConstraintEqualTo(platformView.LeadingAnchor),
-						containerView.TrailingAnchor.ConstraintEqualTo(platformView.TrailingAnchor),
-						containerView.BottomAnchor.ConstraintEqualTo(platformView.BottomAnchor),
-
-						platformContent.TopAnchor.ConstraintEqualTo(containerView.TopAnchor, (nfloat)padding.Top + (nfloat)strokeThickness),
-						platformContent.LeadingAnchor.ConstraintEqualTo(containerView.LeadingAnchor, (nfloat)padding.Left + (nfloat)strokeThickness),
-						platformContent.TrailingAnchor.ConstraintEqualTo(containerView.TrailingAnchor, -(nfloat)padding.Right - (nfloat)strokeThickness),
-						platformContent.BottomAnchor.ConstraintEqualTo(containerView.BottomAnchor, -(nfloat)padding.Bottom - (nfloat)strokeThickness)
-					});
 				}
 				else
 				{
