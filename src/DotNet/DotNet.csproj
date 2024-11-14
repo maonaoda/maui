@@ -8,7 +8,7 @@
     <DotNetFeedUrl>https://dotnetbuilds.blob.core.windows.net/public</DotNetFeedUrl>
     <NugetArtifactsPath>$(MauiRootDirectory)/artifacts</NugetArtifactsPath>
     <PrivateSdk>$(PRIVATE_BUILD)</PrivateSdk>
-    <PrivateSdk>true</PrivateSdk>
+    <PrivateSdk>false</PrivateSdk>
     <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
     <_SkipUpdateBuildNumber>true</_SkipUpdateBuildNumber>
   </PropertyGroup>
