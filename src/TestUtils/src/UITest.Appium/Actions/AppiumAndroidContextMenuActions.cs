@@ -48,9 +48,9 @@ namespace UITest.Appium
 			var element = GetAppiumElement(elementString);
 
 			// If cannot find an element by Id, just try to find using the text.
-			if (element is null)	
+			if (element is null)
 				element = _app.Driver.FindElement(OpenQA.Selenium.By.XPath("//*[@text='" + elementString + "']"));
-			
+
 			if (element is not null)
 			{
 				OpenQA.Selenium.Appium.Interactions.PointerInputDevice touchDevice = new OpenQA.Selenium.Appium.Interactions.PointerInputDevice(PointerKind.Touch);
