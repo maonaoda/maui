@@ -451,7 +451,7 @@ namespace Microsoft.Maui.Layouts
 					{
 						for (int n = cell.Row; n < cell.Row + cell.RowSpan; n++)
 						{
-							height += _rows[n].Size;
+							height += _rows[n].Size + _rowSpacing * (cell.RowSpan > 0 ? cell.RowSpan - 1 : 0);
 						}
 					}
 
@@ -463,7 +463,7 @@ namespace Microsoft.Maui.Layouts
 					{
 						for (int n = cell.Column; n < cell.Column + cell.ColumnSpan; n++)
 						{
-							width += _columns[n].Size;
+							width += _columns[n].Size + _columnSpacing * (cell.ColumnSpan > 0 ? cell.ColumnSpan - 1 : 0);
 						}
 					}
 
