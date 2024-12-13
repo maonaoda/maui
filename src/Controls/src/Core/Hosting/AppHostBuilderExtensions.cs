@@ -88,7 +88,7 @@ public static partial class AppHostBuilderExtensions
 		if (RuntimeFeature.IsHybridWebViewSupported)
 		{
 			// NOTE: not registered under NativeAOT or TrimMode=Full scenarios
-			//handlersCollection.AddHandler<HybridWebView, HybridWebViewHandler>();
+			handlersCollection.AddHandler<HybridWebView, HybridWebViewHandler>();
 		}
 		handlersCollection.AddHandler<Border, BorderHandler>();
 		handlersCollection.AddHandler<IContentView, ContentViewHandler>();
