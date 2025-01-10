@@ -277,6 +277,11 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 				}
 				else
 				{
+					if (child.Parent is ViewGroup parentGroup)
+					{
+						parentGroup.RemoveView(child);
+					}
+
 					base.AddView(child);
 					_currentView = child;
 				}
