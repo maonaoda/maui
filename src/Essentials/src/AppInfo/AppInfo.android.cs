@@ -13,9 +13,34 @@ namespace Microsoft.Maui.ApplicationModel
 	{
 		static readonly Lazy<string> _name = new Lazy<string>(() => Application.Context.ApplicationInfo.LoadLabel(Application.Context.PackageManager));
 		static readonly Lazy<string> _packageName = new Lazy<string>(() => Application.Context.PackageName);
+
+        static Lazy<PackageInfo> _packageInfo = CreateLazyPackageInfo();
+
+        private static Lazy<PackageInfo> CreateLazyPackageInfo()
+        {
 #pragma warning disable CS0618, CA1416, CA1422 // Deprecated in API 33: https://developer.android.com/reference/android/content/pm/PackageManager#getPackageInfo(java.lang.String,%20int)
-		static readonly Lazy<PackageInfo> _packageInfo = new Lazy<PackageInfo>(() => Application.Context.PackageManager.GetPackageInfo(_packageName.Value, PackageInfoFlags.MetaData));
+            return new Lazy<PackageInfo>(() => Application.Context.PackageManager.GetPackageInfo(_packageName.Value, PackageInfoFlags.MetaData));
 #pragma warning restore CS0618, CA1416, CA1422
+        }
+		
+		public PackageInfo PackageInfo
+		{
+			get
+			{
+				try
+				{
+					var packageInfo = _packageInfo.Value;
+					// Try to determine whether Disposed
+					var version = packageInfo.VersionName;
+					return packageInfo;
+				}
+				catch (ObjectDisposedException)
+				{
+					_packageInfo = CreateLazyPackageInfo();
+					return _packageInfo.Value;
+				}
+			}
+		}
 
 		public string PackageName => _packageName.Value;
 
@@ -23,9 +48,9 @@ namespace Microsoft.Maui.ApplicationModel
 
 		public System.Version Version => Utils.ParseVersion(VersionString);
 
-		public string VersionString => _packageInfo.Value.VersionName;
+		public string VersionString => PackageInfo.VersionName;
 
-		public string BuildString => PackageInfoCompat.GetLongVersionCode(_packageInfo.Value).ToString(CultureInfo.InvariantCulture);
+		public string BuildString => PackageInfoCompat.GetLongVersionCode(PackageInfo).ToString(CultureInfo.InvariantCulture);
 
 		public void ShowSettingsUI()
 		{
