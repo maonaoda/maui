@@ -2917,7 +2917,7 @@ static Microsoft.Maui.Platform.LabelExtensions.UpdatePadding(this Microsoft.Maui
 static Microsoft.Maui.Platform.LabelExtensions.UpdateTextColor(this UIKit.UILabel! platformLabel, Microsoft.Maui.ITextStyle! textStyle, UIKit.UIColor? defaultColor = null) -> void
 static Microsoft.Maui.Platform.LabelExtensions.UpdateTextDecorations(this UIKit.UILabel! platformLabel, Microsoft.Maui.ILabel! label) -> void
 static Microsoft.Maui.Platform.LabelExtensions.UpdateVerticalTextAlignment(this UIKit.UILabel! platformLabel, Microsoft.Maui.ILabel! label) -> void
-static Microsoft.Maui.Platform.LayerExtensions.InsertBackgroundLayer(this UIKit.UIView! control, CoreAnimation.CALayer! backgroundLayer, int index = -1) -> void
+static Microsoft.Maui.Platform.LayerExtensions.InsertBackgroundLayer(this UIKit.UIView! control, CoreAnimation.CALayer! backgroundLayer, int index = -1, bool resizeToFit = true) -> void
 static Microsoft.Maui.Platform.LayerExtensions.RemoveBackgroundLayer(this UIKit.UIView! control) -> void
 static Microsoft.Maui.Platform.LayoutViewExtensions.UpdateClipsToBounds(this Microsoft.Maui.Platform.LayoutView! layoutView, Microsoft.Maui.ILayout! layout) -> void
 static Microsoft.Maui.Platform.MauiWKWebView.CreateConfiguration() -> WebKit.WKWebViewConfiguration!

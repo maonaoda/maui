@@ -6,7 +6,7 @@ namespace Microsoft.Maui.Platform
 {
 	public static class LayerExtensions
 	{
-		public static void InsertBackgroundLayer(this UIView control, CALayer backgroundLayer, int index = -1)
+		public static void InsertBackgroundLayer(this UIView control, CALayer backgroundLayer, int index = -1, bool resizeToFit = true)
 		{
 			control.RemoveBackgroundLayer();
 
@@ -19,7 +19,8 @@ namespace Microsoft.Maui.Platform
 				else
 					layer.AddSublayer(backgroundLayer);
 
-				(backgroundLayer as IAutoSizableCALayer)?.AutoSizeToSuperLayer();
+				if (resizeToFit && backgroundLayer is IAutoSizableCALayer autoSizableCALayer)
+					autoSizableCALayer.AutoSizeToSuperLayer();
 			}
 		}
 
