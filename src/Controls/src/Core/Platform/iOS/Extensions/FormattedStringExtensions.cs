@@ -197,45 +197,25 @@ namespace Microsoft.Maui.Controls.Platform
 
 				var spanRects = new List<CGRect>();
 				var spanStartIndex = currentLocation;
-				var spanEndIndex = currentLocation + span.Text.Length - 1;
+				var spanEndIndex = currentLocation + span.Text.Length;
 
-				var startGlyphRange = layoutManager.GetGlyphRange(new NSRange(spanStartIndex, 1));
-				var endGlyphRange = layoutManager.GetGlyphRange(new NSRange(spanEndIndex, 1));
+				var spanCharacterRange = new NSRange(spanStartIndex, spanEndIndex - spanStartIndex);
+				var spanGlyphRange = layoutManager.GetGlyphRange(spanCharacterRange);
 
 				void EnumerateLineFragmentCallback(CGRect rect, CGRect usedRect, NSTextContainer container,
 					NSRange lineGlyphRange, out bool stop)
 				{
-					//Whole span is within the line and bigger than the line
-					if (lineGlyphRange.Location >= startGlyphRange.Location &&
-						NSMaxRange(lineGlyphRange) <= endGlyphRange.Location)
+					var lineStart = lineGlyphRange.Location;
+					var lineEnd = NSMaxRange(lineGlyphRange);
+
+					var spanStartInLine = Math.Max(spanGlyphRange.Location, lineStart);
+					var spanEndInLine = Math.Min(NSMaxRange(spanGlyphRange), lineEnd);
+
+					if (spanStartInLine < spanEndInLine)
 					{
-						spanRects.Add(usedRect);
-					}
-					// Whole span is within the line and smaller than the line
-					else if (lineGlyphRange.Location <= startGlyphRange.Location &&
-							 endGlyphRange.Location <= NSMaxRange(lineGlyphRange))
-					{
-						var spanBoundingRect = layoutManager.GetBoundingRect(
-							new(startGlyphRange.Location, endGlyphRange.Location - startGlyphRange.Location + 1),
-							textContainer);
-						spanRects.Add(spanBoundingRect);
-					}
-					// Span starts on current line and ends on next lines
-					else if (lineGlyphRange.Location <= startGlyphRange.Location &&
-							 NSMaxRange(lineGlyphRange) <= endGlyphRange.Location)
-					{
-						var spanBoundingRect = layoutManager.GetBoundingRect(
-							new(startGlyphRange.Location, NSMaxRange(lineGlyphRange) - startGlyphRange.Location),
-							textContainer);
-						spanRects.Add(spanBoundingRect);
-					}
-					// Span starts on previous lines and ends on current line
-					else if (lineGlyphRange.Location >= startGlyphRange.Location &&
-							 NSMaxRange(lineGlyphRange) >= endGlyphRange.Location)
-					{
-						var spanBoundingRect = layoutManager.GetBoundingRect(
-							new(lineGlyphRange.Location, endGlyphRange.Location - lineGlyphRange.Location),
-							textContainer);
+						var spanInLineRange = new NSRange(spanStartInLine, spanEndInLine - spanStartInLine);
+						var spanBoundingRect = layoutManager.GetBoundingRect(spanInLineRange, textContainer);
+
 						spanRects.Add(spanBoundingRect);
 					}
 
@@ -243,7 +223,7 @@ namespace Microsoft.Maui.Controls.Platform
 				}
 
 				layoutManager.EnumerateLineFragments(
-					new(startGlyphRange.Location, endGlyphRange.Location - startGlyphRange.Location + 1),
+					spanGlyphRange,
 					EnumerateLineFragmentCallback);
 
 				if (span is ISpatialElement spatialElement)
