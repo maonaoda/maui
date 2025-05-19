@@ -723,7 +723,7 @@ void RunMSBuildWithDotNet(
         if (!string.IsNullOrEmpty(targetFramework))
             args.Append($"-f {targetFramework}");
 
-        args.Append($"/p:PackageVersion=9.0.60-20250416.1");
+        args.Append($"/p:PackageVersion=9.0.60-20250519.1");
     
         return args;
     };

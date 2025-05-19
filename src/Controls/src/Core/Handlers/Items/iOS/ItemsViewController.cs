@@ -139,6 +139,12 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			{
 				_measurementCells?.Clear();
 				ItemsViewLayout?.ClearCellSizeCache();
+
+				CoreFoundation.DispatchQueue.MainQueue.DispatchAsync(() =>
+				{
+					CollectionView?.CollectionViewLayout?.InvalidateLayout();
+					CollectionView?.ReloadData();
+				});
 			}
 
 			if (wasEmpty != _isEmpty)
@@ -702,14 +708,18 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 				return;
 			}
 
-			if (isEmpty)
+			CoreFoundation.DispatchQueue.MainQueue.DispatchAsync(() =>
 			{
-				ShowEmptyView();
-			}
-			else
-			{
-				HideEmptyView();
-			}
+				if (isEmpty)
+				{
+					ShowEmptyView();
+					CollectionView?.BringSubviewToFront(_emptyUIView);
+				}
+				else
+				{
+					HideEmptyView();
+				}
+			});
 		}
 
 		void AlignEmptyView()
@@ -758,13 +768,18 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			}
 
 			_emptyUIView.Tag = EmptyTag;
-			CollectionView.AddSubview(_emptyUIView);
+
+			_emptyUIView.RemoveFromSuperview();
+			CollectionView.InsertSubview(_emptyUIView, 0);
 
 			if (((IElementController)ItemsView).LogicalChildren.IndexOf(_emptyViewFormsElement) == -1)
 			{
 				ItemsView.AddLogicalChild(_emptyViewFormsElement);
 			}
 
+			_emptyUIView.Frame = DetermineEmptyViewFrame();
+			_emptyUIView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+			_emptyUIView.SetNeedsLayout();
 			_emptyUIView.InvalidateMeasure();
 
 			AlignEmptyView();
