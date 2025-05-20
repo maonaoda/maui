@@ -254,7 +254,12 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 				{
 					invalidatedPaths ??= new List<NSIndexPath>(visibleCellsLength);
 					var path = CollectionView.IndexPathForCell(cell);
-					invalidatedPaths.Add(path);
+					if (path != null &&
+						path.Section < CollectionView.NumberOfSections() &&
+						path.Item < CollectionView.NumberOfItemsInSection(path.Section))
+					{
+						invalidatedPaths.Add(path);
+					}
 				}
 			}
 
@@ -262,7 +267,14 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			{
 				var layoutInvalidationContext = new UICollectionViewFlowLayoutInvalidationContext();
 				layoutInvalidationContext.InvalidateItems(invalidatedPaths.ToArray());
-				CollectionView.CollectionViewLayout.InvalidateLayout(layoutInvalidationContext);
+				try
+				{
+					CollectionView.CollectionViewLayout.InvalidateLayout(layoutInvalidationContext);
+				}
+				catch (Exception ex)
+				{
+					System.Diagnostics.Debug.WriteLine($"[Layout Suppressed] Invalidation failed: {ex}");
+				}
 			}
 		}
 
@@ -713,7 +725,6 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 				if (isEmpty)
 				{
 					ShowEmptyView();
-					CollectionView?.BringSubviewToFront(_emptyUIView);
 				}
 				else
 				{
@@ -783,6 +794,7 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			_emptyUIView.InvalidateMeasure();
 
 			AlignEmptyView();
+			CollectionView?.BringSubviewToFront(_emptyUIView);
 			_emptyViewDisplayed = true;
 		}
 

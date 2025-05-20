@@ -16,6 +16,7 @@ namespace Microsoft.Maui.Controls
 			PickerHandler.Mapper.ReplaceMapping<Picker, IPickerHandler>(nameof(Picker.VerticalOptions), MapVerticalOptions);
 #endif
 			PickerHandler.Mapper.ReplaceMapping<Picker, IPickerHandler>(nameof(Picker.ItemsSource), MapItemsSource);
+			PickerHandler.Mapper.AppendToMapping(nameof(VisualElement.IsFocused), InputView.MapIsFocused);
 		}
 
 		internal static void MapItemsSource(IPickerHandler handler, IPicker view)

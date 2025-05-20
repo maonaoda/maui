@@ -41,8 +41,8 @@ var NuGetOnlyPackages = new string[] {
 };
 public enum RuntimeVariant
 {
-	Mono,
-	NativeAOT
+    Mono,
+    NativeAOT
 }
 
 RuntimeVariant RUNTIME_VARIANT = Argument("runtimevariant", RuntimeVariant.Mono);
@@ -56,11 +56,11 @@ Task("dotnet")
     .Description("Provisions the .NET SDK into bin/dotnet based on eng/Versions.props")
     .Does(() =>
     {
-        if (!localDotnet) 
+        if (!localDotnet)
             return;
 
         //We are passing a nuget folder with nuget locations
-        if(!string.IsNullOrEmpty(nugetSource))
+        if (!string.IsNullOrEmpty(nugetSource))
         {
             EnsureDirectoryExists(nugetSource);
             var originalNuget = File($"{rootFolder}/NuGet.config");
@@ -75,19 +75,20 @@ Task("dotnet")
                 .SetConfiguration(configuration),
         });
 
-        DotNetTool("tool",  new DotNetToolSettings {
-		    ToolPath = dotnetPath,
-		    DiagnosticOutput = true,	
-		    ArgumentCustomization = args => args.Append("restore")
-	    });
+        DotNetTool("tool", new DotNetToolSettings
+        {
+            ToolPath = dotnetPath,
+            DiagnosticOutput = true,
+            ArgumentCustomization = args => args.Append("restore")
+        });
     });
 
 Task("dotnet-local-workloads")
     .Does(() =>
     {
-        if (!localDotnet) 
+        if (!localDotnet)
             return;
-        
+
         DotNetBuild("./src/DotNet/DotNet.csproj", new DotNetBuildSettings
         {
             MSBuildSettings = new DotNetMSBuildSettings()
@@ -105,11 +106,12 @@ Task("dotnet-local-workloads")
             ToolPath = dotnetPath,
         });
 
-        DotNetTool("tool",  new DotNetToolSettings {
-		    ToolPath = dotnetPath,
-		    DiagnosticOutput = true,	
-		    ArgumentCustomization = args => args.Append("restore")
-	    });
+        DotNetTool("tool", new DotNetToolSettings
+        {
+            ToolPath = dotnetPath,
+            DiagnosticOutput = true,
+            ArgumentCustomization = args => args.Append("restore")
+        });
     });
 
 Task("dotnet-buildtasks")
@@ -158,9 +160,10 @@ Task("dotnet-samples")
 
         var properties = new Dictionary<string, string>();
 
-        if(useNuget)
+        if (useNuget)
         {
-            properties = new Dictionary<string, string> {
+            properties = new Dictionary<string, string>
+            {
                 ["UseWorkload"] = "true",
                 // ["GenerateAppxPackageOnBuild"] = "true",
                 ["RestoreConfigFile"] = tempDir.CombineWithFilePath("NuGet.config").FullPath,
@@ -198,9 +201,10 @@ Task("uitests-apphost")
 
         var properties = new Dictionary<string, string>();
 
-        if(useNuget)
+        if (useNuget)
         {
-            properties = new Dictionary<string, string> {
+            properties = new Dictionary<string, string>
+            {
                 ["UseWorkload"] = "true",
                 // ["GenerateAppxPackageOnBuild"] = "true",
                 ["RestoreConfigFile"] = tempDir.CombineWithFilePath("NuGet.config").FullPath,
@@ -234,7 +238,7 @@ Task("dotnet-test")
     .Description("Build the solutions")
     .Does(() =>
     {
-        var tests = new []
+        var tests = new[]
         {
             "**/Controls.Core.UnitTests.csproj",
         //    "**/Controls.Core.Design.UnitTests.csproj",
@@ -252,7 +256,7 @@ Task("dotnet-test")
 
         foreach (var test in tests)
         {
-            if (!IsRunningOnWindows() && (test.Contains("Compatibility.Core.UnitTests") || test.Contains("Controls.Core.Design.UnitTests"))) 
+            if (!IsRunningOnWindows() && (test.Contains("Compatibility.Core.UnitTests") || test.Contains("Controls.Core.Design.UnitTests")))
             {
                 continue;
             }
@@ -292,8 +296,8 @@ Task("dotnet-pack-maui")
         {
             sln = "./eng/Microsoft.Maui.Packages-mac.slnf";
         }
- 
-        if(string.IsNullOrEmpty(officialBuildId))
+
+        if (string.IsNullOrEmpty(officialBuildId))
         {
             officialBuildId = DateTime.UtcNow.ToString("yyyyMMdd.1");
         }
@@ -510,7 +514,7 @@ Task("VS")
         UseLocalNuGetCacheFolder();
 
         StartVisualStudioForDotNet();
-    }); 
+    });
 
 
 bool RunPackTarget()
@@ -526,7 +530,7 @@ bool RunPackTarget()
     // Does the user want to run a pack as part of a different target?
     if (HasArgument("pack") && Argument<string>("pack", "true") != "false")
         return true;
-        
+
     // If the request is to open a different sln then let's see if pack has ever run
     // if it hasn't then lets pack maui so the sln will open
     if (Argument<string>("sln", null) != null)
@@ -570,7 +574,7 @@ void SetDotNetEnvironmentVariables(string dotnetDir = null)
     Information("dotnet: " + dotnet);
     //dotnet = "/usr/local/share/dotnet";
     Information("dotnet: " + dotnet);
-    
+
     SetEnvironmentVariable("VSDebugger_ValidateDotnetDebugLibSignatures", "0");
     SetEnvironmentVariable("DOTNET_INSTALL_DIR", dotnet);
     SetEnvironmentVariable("DOTNET_ROOT", dotnet);
@@ -609,12 +613,12 @@ void StartVisualStudioCodeForDotNet()
         return;
     }
 
-    if(localDotnet)
+    if (localDotnet)
     {
         SetDotNetEnvironmentVariables();
     }
 
-    StartProcess("code", new ProcessSettings{ EnvironmentVariables = GetDotNetEnvironmentVariables() });
+    StartProcess("code", new ProcessSettings { EnvironmentVariables = GetDotNetEnvironmentVariables() });
 }
 
 void StartVisualStudioForDotNet()
@@ -644,7 +648,7 @@ void StartVisualStudioForDotNet()
         return;
     }
 
-    if(localDotnet)
+    if (localDotnet)
     {
         SetDotNetEnvironmentVariables();
     }
@@ -654,13 +658,13 @@ void StartVisualStudioForDotNet()
         var vsLatest = VSWhereLatest(new VSWhereLatestSettings { IncludePrerelease = includePrerelease, });
         if (vsLatest == null)
             throw new Exception("Unable to find Visual Studio!");
-    
+
         StartProcess(vsLatest.CombineWithFilePath("./Common7/IDE/devenv.exe"), sln);
     }
     else
     {
-       
-        StartProcess("open", new ProcessSettings{ Arguments = sln, EnvironmentVariables = GetDotNetEnvironmentVariables() });
+
+        StartProcess("open", new ProcessSettings { Arguments = sln, EnvironmentVariables = GetDotNetEnvironmentVariables() });
     }
 }
 
@@ -684,8 +688,8 @@ void RunMSBuildWithDotNet(
     var binlog = string.IsNullOrEmpty(targetFramework) ?
         $"\"{GetLogDirectory()}/{binlogPrefix}{name}-{configuration}-{target}-{type}-{DateTime.UtcNow.ToFileTimeUtc()}.binlog\"" :
         $"\"{GetLogDirectory()}/{binlogPrefix}{name}-{configuration}-{target}-{targetFramework}-{type}-{DateTime.UtcNow.ToFileTimeUtc()}.binlog\"";
-    
-    if(localDotnet)
+
+    if (localDotnet)
         SetDotNetEnvironmentVariables();
 
     var msbuildSettings = new DotNetMSBuildSettings()
@@ -693,8 +697,8 @@ void RunMSBuildWithDotNet(
         .SetMaxCpuCount(maxCpuCount)
         .WithTarget(target)
         .EnableBinaryLogger(binlog)
-        
-       // .SetVerbosity(Verbosity.Diagnostic)
+
+        // .SetVerbosity(Verbosity.Diagnostic)
         ;
 
     if (warningsAsError)
@@ -723,8 +727,8 @@ void RunMSBuildWithDotNet(
         if (!string.IsNullOrEmpty(targetFramework))
             args.Append($"-f {targetFramework}");
 
-        args.Append($"/p:PackageVersion=9.0.60-20250519.1");
-    
+        args.Append($"/p:PackageVersion=9.0.60-20250520.1");
+
         return args;
     };
 
@@ -734,7 +738,7 @@ void RunMSBuildWithDotNet(
     DotNetBuild(sln, dotnetBuildSettings);
 }
 
-void RunTestWithLocalDotNet(string csproj, string config, string pathDotnet = null, Dictionary<string,string> argsExtra = null, bool noBuild = false, string resultsFileNameWithoutExtension = null, string filter = "", int maxCpuCount = 0)
+void RunTestWithLocalDotNet(string csproj, string config, string pathDotnet = null, Dictionary<string, string> argsExtra = null, bool noBuild = false, string resultsFileNameWithoutExtension = null, string filter = "", int maxCpuCount = 0)
 {
     if (string.IsNullOrWhiteSpace(filter))
     {
@@ -743,7 +747,7 @@ void RunTestWithLocalDotNet(string csproj, string config, string pathDotnet = nu
 
     if (!string.IsNullOrWhiteSpace(filter))
     {
-        Information("Run Tests With Filter {0}", filter);	
+        Information("Run Tests With Filter {0}", filter);
     }
 
     string binlog;
@@ -756,7 +760,7 @@ void RunTestWithLocalDotNet(string csproj, string config, string pathDotnet = nu
     {
         // Make sure the path doesn't refer to the dotnet executable and make path absolute
         var localDotnetRoot = MakeAbsolute(Directory(System.IO.Path.GetDirectoryName(pathDotnet)));
-    	Information("new dotnet root: {0}", localDotnetRoot);
+        Information("new dotnet root: {0}", localDotnetRoot);
 
         SetDotNetEnvironmentVariables(localDotnetRoot.FullPath);
     }
@@ -764,7 +768,7 @@ void RunTestWithLocalDotNet(string csproj, string config, string pathDotnet = nu
     if (string.IsNullOrWhiteSpace(resultsFileNameWithoutExtension))
     {
         binlog = $"{logDirectory}/{name}-{config}.binlog";
-        results = $"{name}-{config}.trx";   
+        results = $"{name}-{config}.trx";
     }
     else
     {
@@ -775,47 +779,50 @@ void RunTestWithLocalDotNet(string csproj, string config, string pathDotnet = nu
     Information("Run Test binlog: {0}", binlog);
 
     var settings = new DotNetTestSettings
-        {
-            Configuration = config,
-            NoBuild = noBuild,
-            Filter = filter,
-            Loggers = { 
+    {
+        Configuration = config,
+        NoBuild = noBuild,
+        Filter = filter,
+        Loggers = {
                 $"trx;LogFileName={results}",
                 $"console;verbosity=normal"
-            }, 
-           	ResultsDirectory = GetTestResultsDirectory(),
+            },
+        ResultsDirectory = GetTestResultsDirectory(),
         //    Verbosity = Cake.Common.Tools.DotNetCore.DotNetCoreVerbosity.Diagnostic,
-            ArgumentCustomization = args => 
-            { 
-                args.Append($"-bl:{binlog}");
-                if(maxCpuCount > 0)
-                {
-                    args.Append($"-maxcpucount:{maxCpuCount}");
-                }
-
-                if(argsExtra != null)
-                {
-                    foreach(var prop in argsExtra)
-                    {
-                        args.Append($"/p:{prop.Key}={prop.Value}");
-                    }        
-                }        
-                    
-                // https://github.com/microsoft/vstest/issues/5112
-                args.Append($"/p:VStestUseMSBuildOutput=false");
-                
-                return args;
+        ArgumentCustomization = args =>
+        {
+            args.Append($"-bl:{binlog}");
+            if (maxCpuCount > 0)
+            {
+                args.Append($"-maxcpucount:{maxCpuCount}");
             }
-        };
-    
-    if(!string.IsNullOrEmpty(pathDotnet))
+
+            if (argsExtra != null)
+            {
+                foreach (var prop in argsExtra)
+                {
+                    args.Append($"/p:{prop.Key}={prop.Value}");
+                }
+            }
+
+            // https://github.com/microsoft/vstest/issues/5112
+            args.Append($"/p:VStestUseMSBuildOutput=false");
+
+            return args;
+        }
+    };
+
+    if (!string.IsNullOrEmpty(pathDotnet))
     {
         settings.ToolPath = pathDotnet;
     }
 
-    try {
+    try
+    {
         DotNetTest(csproj, settings);
-    } finally {
+    }
+    finally
+    {
         Information("Test Run complete: {0}", results);
     }
 }
@@ -859,25 +866,25 @@ void ProcessTFMSwitches()
 {
     List<string> replaceTarget = new List<String>();
 
-    if(HasArgument("android"))
+    if (HasArgument("android"))
         replaceTarget.Add("_IncludeAndroid");
 
-    if(HasArgument("windows"))
+    if (HasArgument("windows"))
         replaceTarget.Add("_IncludeWindows");
 
-    if(HasArgument("ios"))
+    if (HasArgument("ios"))
         replaceTarget.Add("_IncludeIos");
 
-    if(HasArgument("catalyst") || HasArgument("maccatalyst"))
+    if (HasArgument("catalyst") || HasArgument("maccatalyst"))
         replaceTarget.Add("_IncludeMacCatalyst");
 
-    if(HasArgument("tizen"))
+    if (HasArgument("tizen"))
         replaceTarget.Add("_IncludeTizen");
 
     if (replaceTarget.Count > 0)
     {
         CopyFile("Directory.Build.Override.props.in", "Directory.Build.Override.props");
-        foreach(var replaceWith in replaceTarget)
+        foreach (var replaceWith in replaceTarget)
         {
             ReplaceTextInFiles("Directory.Build.Override.props", $"<{replaceWith}></{replaceWith}>", $"<{replaceWith}>true</{replaceWith}>");
         }

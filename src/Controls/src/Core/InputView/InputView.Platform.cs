@@ -7,12 +7,30 @@ namespace Microsoft.Maui.Controls
 #if ANDROID || IOS
 		internal static void MapIsFocused(IViewHandler handler, IView view)
 		{
-			if (view is InputView iv)
+			var manager = handler?.GetService<HideSoftInputOnTappedChangedManager>();
+			if (manager == null)
 			{
-				handler
-					?.GetService<HideSoftInputOnTappedChangedManager>()
-					?.UpdateFocusForView(iv);
+				return;
 			}
+
+			switch (view)
+			{
+				case InputView iv:
+					manager.UpdateFocusForView(iv);
+					break;
+#if IOS
+				case DatePicker datePicker:
+					manager.UpdateFocusForView(datePicker);
+					break;
+				case TimePicker timePicker:
+					manager.UpdateFocusForView(timePicker);
+					break;
+				case Picker picker:
+					manager.UpdateFocusForView(picker);
+					break;
+#endif
+			}
+
 		}
 #endif
 	}
