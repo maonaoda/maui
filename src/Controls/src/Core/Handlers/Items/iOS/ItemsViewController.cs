@@ -451,14 +451,18 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 		protected virtual void UpdateDefaultCell(DefaultCell cell, NSIndexPath indexPath)
 		{
 			if (ItemsSource.IsIndexPathValid(indexPath))
-		{
-			cell.Label.Text = ItemsSource[indexPath].ToString();
-
-			if (cell is ItemsViewCell constrainedCell)
 			{
-				ItemsViewLayout.PrepareCellForLayout(constrainedCell);
+				var item = ItemsSource[indexPath];
+				if (item is null)
+					return;
+
+				cell.Label.Text = ItemsSource[indexPath].ToString();
+
+				if (cell is ItemsViewCell constrainedCell)
+				{
+					ItemsViewLayout.PrepareCellForLayout(constrainedCell);
+				}
 			}
-		}
 		}
 
 		protected virtual void UpdateTemplatedCell(TemplatedCell cell, NSIndexPath indexPath)
@@ -467,19 +471,19 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 
 			if (ItemsSource.IsIndexPathValid(indexPath))
 			{
-			var bindingContext = ItemsSource[indexPath];
+				var bindingContext = ItemsSource[indexPath];
 
-			// If we've already created a cell for this index path (for measurement), re-use the content
-			if (_measurementCells != null && _measurementCells.TryGetValue(bindingContext, out TemplatedCell measurementCell))
-			{
-				_measurementCells.Remove(bindingContext);
-				measurementCell.LayoutAttributesChanged -= CellLayoutAttributesChanged;
-				cell.UseContent(measurementCell);
-			}
-			else
-			{
-				cell.Bind(ItemsView.ItemTemplate, ItemsSource[indexPath], ItemsView);
-			}
+				// If we've already created a cell for this index path (for measurement), re-use the content
+				if (_measurementCells != null && _measurementCells.TryGetValue(bindingContext, out TemplatedCell measurementCell))
+				{
+					_measurementCells.Remove(bindingContext);
+					measurementCell.LayoutAttributesChanged -= CellLayoutAttributesChanged;
+					cell.UseContent(measurementCell);
+				}
+				else
+				{
+					cell.Bind(ItemsView.ItemTemplate, ItemsSource[indexPath], ItemsView);
+				}
 			}
 
 			cell.LayoutAttributesChanged += CellLayoutAttributesChanged;
@@ -520,25 +524,28 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 
 		protected virtual string DetermineCellReuseId(NSIndexPath indexPath)
 		{
-			if (ItemsView.ItemTemplate != null)
 			if (ItemsView.ItemTemplate != null && ItemsSource.IsIndexPathValid(indexPath))
 			{
 				var item = ItemsSource[indexPath];
-
-				var dataTemplate = ItemsView.ItemTemplate.SelectDataTemplate(item, ItemsView);
-
-				var cellOrientation = ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Vertical ? "v" : "h";
-				var cellType = ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Vertical ? typeof(VerticalCell) : typeof(HorizontalCell);
-
-				var reuseId = $"_maui_{cellOrientation}_{dataTemplate.Id}";
-
-				if (!_cellReuseIds.Contains(reuseId))
+				if (item is not null)
 				{
-					CollectionView.RegisterClassForCell(cellType, new NSString(reuseId));
-					_cellReuseIds.Add(reuseId);
-				}
+					var dataTemplate = ItemsView.ItemTemplate.SelectDataTemplate(item, ItemsView);
+					if (dataTemplate is not null)
+					{
+						var cellOrientation = ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Vertical ? "v" : "h";
+						var cellType = ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Vertical ? typeof(VerticalCell) : typeof(HorizontalCell);
 
-				return reuseId;
+						var reuseId = $"_maui_{cellOrientation}_{dataTemplate.Id}";
+
+						if (!_cellReuseIds.Contains(reuseId))
+						{
+							CollectionView.RegisterClassForCell(cellType, new NSString(reuseId));
+							_cellReuseIds.Add(reuseId);
+						}
+
+						return reuseId;
+					}
+				}
 			}
 
 			return ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Horizontal
@@ -879,7 +886,13 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 
 			// Keep this cell around, we can transfer the contents to the actual cell when the UICollectionView creates it
 			if (_measurementCells != null && ItemsSource.IsIndexPathValid(indexPath))
-				_measurementCells[ItemsSource[indexPath]] = templatedCell;
+			{
+				var item = ItemsSource[indexPath];
+				if (item is not null)
+				{
+					_measurementCells[item] = templatedCell;
+				}
+			}
 
 			return templatedCell;
 		}
