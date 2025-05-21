@@ -450,6 +450,8 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 
 		protected virtual void UpdateDefaultCell(DefaultCell cell, NSIndexPath indexPath)
 		{
+			if (ItemsSource.IsIndexPathValid(indexPath))
+		{
 			cell.Label.Text = ItemsSource[indexPath].ToString();
 
 			if (cell is ItemsViewCell constrainedCell)
@@ -457,11 +459,14 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 				ItemsViewLayout.PrepareCellForLayout(constrainedCell);
 			}
 		}
+		}
 
 		protected virtual void UpdateTemplatedCell(TemplatedCell cell, NSIndexPath indexPath)
 		{
 			cell.LayoutAttributesChanged -= CellLayoutAttributesChanged;
 
+			if (ItemsSource.IsIndexPathValid(indexPath))
+			{
 			var bindingContext = ItemsSource[indexPath];
 
 			// If we've already created a cell for this index path (for measurement), re-use the content
@@ -474,6 +479,7 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			else
 			{
 				cell.Bind(ItemsView.ItemTemplate, ItemsSource[indexPath], ItemsView);
+			}
 			}
 
 			cell.LayoutAttributesChanged += CellLayoutAttributesChanged;
@@ -515,6 +521,7 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 		protected virtual string DetermineCellReuseId(NSIndexPath indexPath)
 		{
 			if (ItemsView.ItemTemplate != null)
+			if (ItemsView.ItemTemplate != null && ItemsSource.IsIndexPathValid(indexPath))
 			{
 				var item = ItemsSource[indexPath];
 
@@ -871,7 +878,7 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			UpdateTemplatedCell(templatedCell, indexPath);
 
 			// Keep this cell around, we can transfer the contents to the actual cell when the UICollectionView creates it
-			if (_measurementCells != null)
+			if (_measurementCells != null && ItemsSource.IsIndexPathValid(indexPath))
 				_measurementCells[ItemsSource[indexPath]] = templatedCell;
 
 			return templatedCell;
