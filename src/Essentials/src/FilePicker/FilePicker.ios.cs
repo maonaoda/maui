@@ -43,6 +43,7 @@ namespace Microsoft.Maui.Storage
 				{
 					PickHandler = urls => GetFileResults(urls, tcs)
 				};
+			}
 
 #if !MACCATALYST
 				if (documentPicker.PresentationController != null && !(OperatingSystem.IsIOSVersionAtLeast(14, 0) && NSProcessInfo.ProcessInfo.IsiOSApplicationOnMac))
@@ -51,7 +52,6 @@ namespace Microsoft.Maui.Storage
 						new UIPresentationControllerDelegate(() => GetFileResults(null, tcs));
 				}
 #endif
-			}
 
 			var parentController = WindowStateManager.Default.GetCurrentUIViewController(true);
 			parentController.PresentViewController(documentPicker, true, null);
