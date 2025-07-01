@@ -129,6 +129,7 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			return ItemsSource.ItemCountInGroup(section);
 		}
 
+		private bool _hasHandledEmptyReload = false;
 		void CheckForEmptySource()
 		{
 			var wasEmpty = _isEmpty;
@@ -137,14 +138,23 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 
 			if (_isEmpty)
 			{
+				_hasHandledEmptyReload = true;
+
 				_measurementCells?.Clear();
 				ItemsViewLayout?.ClearCellSizeCache();
 
-				CoreFoundation.DispatchQueue.MainQueue.DispatchAsync(() =>
+				if (!_hasHandledEmptyReload)
 				{
-					CollectionView?.CollectionViewLayout?.InvalidateLayout();
-					CollectionView?.ReloadData();
-				});
+					CoreFoundation.DispatchQueue.MainQueue.DispatchAsync(() =>
+					{
+						CollectionView?.CollectionViewLayout?.InvalidateLayout();
+						CollectionView?.ReloadData();
+					});
+				}
+			}
+			else if (!_isEmpty)
+			{
+				_hasHandledEmptyReload = false;
 			}
 
 			if (wasEmpty != _isEmpty)
@@ -204,6 +214,8 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 
 		public override void ViewWillLayoutSubviews()
 		{
+			System.Diagnostics.Debug.WriteLine("ViewWillLayoutSubviews");
+
 			ConstrainItemsToBounds();
 
 			var mauiCollectionView = CollectionView as MauiCollectionView;
@@ -716,6 +728,8 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			{
 				return;
 			}
+
+			_hasHandledEmptyReload = false;
 
 			// Get rid of the old view
 			TearDownEmptyView();
