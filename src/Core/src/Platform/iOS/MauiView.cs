@@ -9,6 +9,16 @@ namespace Microsoft.Maui.Platform
 {
 	public abstract class MauiView : UIView, ICrossPlatformLayoutBacking, IVisualTreeElementProvidable, IUIViewLifeCycleEvents, IPlatformMeasureInvalidationController
 	{
+#pragma warning disable RS0016 // Add public types and members to the declared API
+		public MauiView(NativeHandle handle) : base(handle)
+#pragma warning restore RS0016 // Add public types and members to the declared API
+		{
+		}
+
+		public MauiView()
+		{
+		}
+
 		bool _invalidateParentWhenMovedToWindow;
 		static bool? _respondsToSafeArea;
 

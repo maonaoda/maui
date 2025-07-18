@@ -29,6 +29,14 @@ namespace Microsoft.Maui.Platform
 			_refreshControlParent = this;
 		}
 
+#pragma warning disable RS0016 // Add public types and members to the declared API
+		public MauiRefreshView(NativeHandle handle) : base(handle)
+#pragma warning restore RS0016 // Add public types and members to the declared API
+		{
+			_refreshControl = new UIRefreshControl();
+			_refreshControlParent = this;
+		}
+
 		public bool IsRefreshing
 		{
 			get { return _isRefreshing; }
@@ -132,7 +140,7 @@ namespace Microsoft.Maui.Platform
 
 		bool TryInsertRefresh(UIView view, int index = 0)
 		{
-			if(!_refreshControl.Enabled)
+			if (!_refreshControl.Enabled)
 			{
 				return false;
 			}
