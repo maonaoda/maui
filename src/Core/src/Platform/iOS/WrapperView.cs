@@ -198,7 +198,9 @@ namespace Microsoft.Maui.Platform
 			{
 				var child = subviews[0];
 
-				if (child is UIImageView || (child is UIButton imageButton && imageButton.ImageView?.Image is not null && imageButton.CurrentTitle is null))
+				if (child is UIImageView
+					|| child is UILabel
+					|| (child is UIButton imageButton && imageButton.ImageView?.Image is not null && imageButton.CurrentTitle is null))
 				{
 					if (CrossPlatformLayout is not null)
 					{
