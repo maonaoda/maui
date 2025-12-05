@@ -11,6 +11,7 @@ namespace Microsoft.Maui.Controls
 			// Adjust the mappings to preserve Controls.DatePicker legacy behaviors
 #if IOS
 			DatePickerHandler.Mapper.ReplaceMapping<DatePicker, IDatePickerHandler>(PlatformConfiguration.iOSSpecific.DatePicker.UpdateModeProperty.PropertyName, MapUpdateMode);
+			DatePickerHandler.Mapper.AppendToMapping(nameof(VisualElement.IsFocused), InputView.MapIsFocused);
 #endif
 		}
 	}
