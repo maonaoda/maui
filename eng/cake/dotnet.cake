@@ -891,6 +891,8 @@ void RunMSBuildWithDotNet(
         if (!string.IsNullOrEmpty(targetFramework))
             args.Append($"-f {targetFramework}");
 
+        args.Append($"/p:PackageVersion=10.0.11-20251204.2");
+
         return args;
     };
 
