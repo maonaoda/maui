@@ -182,7 +182,9 @@ public class TabbedPageManager
 		Element.Arrange(e);
 	}
 
-	void RemoveTabs()
+#pragma warning disable RS0016 // Add public types and members to the declared API
+	protected virtual void RemoveTabs()
+#pragma warning restore RS0016 // Add public types and members to the declared API
 	{
 		_pendingFragment?.Dispose();
 		_pendingFragment = null;
@@ -227,7 +229,10 @@ public class TabbedPageManager
 		// For non-modal navigation (e.g. NavigationPage.PushAsync), tabs must be removed so that
 		// the newly pushed page can use the full available height.
 		if (Element?.Navigation?.ModalStack?.Count > 0)
+		{
+			SetContentBottomMargin(0);
 			return;
+		}
 
 		RemoveTabs();
 	}
@@ -265,18 +270,20 @@ public class TabbedPageManager
 		if (IsBottomTabPlacement)
 		{
 			id = Resource.Id.navigationlayout_bottomtabs;
-			if (_tabplacementId == id)
-				return;
 
 			SetContentBottomMargin(_context.Context.Resources.GetDimensionPixelSize(Resource.Dimension.design_bottom_navigation_height));
+
+			if (_tabplacementId == id)
+				return;
 		}
 		else
 		{
 			id = Resource.Id.navigationlayout_toptabs;
-			if (_tabplacementId == id)
-				return;
 
 			SetContentBottomMargin(0);
+
+			if (_tabplacementId == id)
+				return;
 		}
 
 		if (_context?.Context is Context c)
@@ -306,7 +313,9 @@ public class TabbedPageManager
 		}
 	}
 
-	void SetContentBottomMargin(int bottomMargin)
+#pragma warning disable RS0016 // Add public types and members to the declared API
+	protected void SetContentBottomMargin(int bottomMargin)
+#pragma warning restore RS0016 // Add public types and members to the declared API
 	{
 		var rootManager = _context.GetNavigationRootManager();
 		var layoutContent = rootManager.RootView?.FindViewById(Resource.Id.navigationlayout_content);
