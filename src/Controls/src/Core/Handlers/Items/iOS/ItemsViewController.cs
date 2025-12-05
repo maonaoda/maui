@@ -131,6 +131,7 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			return ItemsSource.ItemCountInGroup(section);
 		}
 
+		private bool _hasHandledEmptyReload = false;
 		void CheckForEmptySource()
 		{
 			var wasEmpty = _isEmpty;
@@ -139,8 +140,13 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 
 			if (_isEmpty)
 			{
+				_hasHandledEmptyReload = true;
 				_measurementCells?.Clear();
 				ItemsViewLayout?.ClearCellSizeCache();
+			}
+			else
+			{
+				_hasHandledEmptyReload = false;
 			}
 
 			if (wasEmpty != _isEmpty)
@@ -265,7 +271,13 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 				if (visibleCells[n] is TemplatedCell { MeasureInvalidated: true } cell)
 				{
 					invalidatedCells ??= [];
-					invalidatedCells.Add(cell);
+					var path = CollectionView.IndexPathForCell(cell);
+					if (path != null &&
+						path.Section < CollectionView.NumberOfSections() &&
+						path.Item < CollectionView.NumberOfItemsInSection(path.Section))
+					{
+						invalidatedCells.Add(cell);
+					}
 				}
 			}
 
@@ -470,11 +482,20 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 
 		protected virtual void UpdateDefaultCell(DefaultCell cell, NSIndexPath indexPath)
 		{
-			cell.Label.Text = ItemsSource[indexPath].ToString();
-
-			if (cell is ItemsViewCell constrainedCell)
+			if (ItemsSource.IsIndexPathValid(indexPath))
 			{
-				ItemsViewLayout.PrepareCellForLayout(constrainedCell);
+				var item = ItemsSource[indexPath];
+				if (item is null)
+				{
+					return;
+				}
+
+				cell.Label.Text = ItemsSource[indexPath].ToString();
+
+				if (cell is ItemsViewCell constrainedCell)
+				{
+					ItemsViewLayout.PrepareCellForLayout(constrainedCell);
+				}
 			}
 		}
 
@@ -482,23 +503,26 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 		{
 			cell.LayoutAttributesChanged -= CellLayoutAttributesChanged;
 
-			var bindingContext = ItemsSource[indexPath];
-
-			// If we've already created a cell for this index path (for measurement), re-use the content
-			if (_measurementCells != null && _measurementCells.TryGetValue(bindingContext, out TemplatedCell measurementCell))
+			if (ItemsSource.IsIndexPathValid(indexPath))
 			{
-				_measurementCells.Remove(bindingContext);
-				measurementCell.LayoutAttributesChanged -= CellLayoutAttributesChanged;
-				cell.UseContent(measurementCell);
-			}
-			else
-			{
-				cell.Bind(ItemsView.ItemTemplate, ItemsSource[indexPath], ItemsView);
-			}
+				var bindingContext = ItemsSource[indexPath];
 
-			cell.LayoutAttributesChanged += CellLayoutAttributesChanged;
+				// If we've already created a cell for this index path (for measurement), re-use the content
+				if (_measurementCells != null && _measurementCells.TryGetValue(bindingContext, out TemplatedCell measurementCell))
+				{
+					_measurementCells.Remove(bindingContext);
+					measurementCell.LayoutAttributesChanged -= CellLayoutAttributesChanged;
+					cell.UseContent(measurementCell);
+				}
+				else
+				{
+					cell.Bind(ItemsView.ItemTemplate, ItemsSource[indexPath], ItemsView);
+				}
 
-			ItemsViewLayout.PrepareCellForLayout(cell);
+				cell.LayoutAttributesChanged += CellLayoutAttributesChanged;
+
+				ItemsViewLayout.PrepareCellForLayout(cell);
+			}
 		}
 
 		public virtual NSIndexPath GetIndexForItem(object item)
@@ -534,24 +558,28 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 
 		protected virtual string DetermineCellReuseId(NSIndexPath indexPath)
 		{
-			if (ItemsView.ItemTemplate != null)
+			if (ItemsView.ItemTemplate != null && ItemsSource.IsIndexPathValid(indexPath))
 			{
 				var item = ItemsSource[indexPath];
-
-				var dataTemplate = ItemsView.ItemTemplate.SelectDataTemplate(item, ItemsView);
-
-				var cellOrientation = ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Vertical ? "v" : "h";
-				(Type cellType, var cellTypeReuseId) = DetermineTemplatedCellType();
-
-				var reuseId = $"_{cellTypeReuseId}_{cellOrientation}_{dataTemplate.Id}";
-
-				if (!_cellReuseIds.Contains(reuseId))
+				if (item is not null)
 				{
-					CollectionView.RegisterClassForCell(cellType, new NSString(reuseId));
-					_cellReuseIds.Add(reuseId);
-				}
+					var dataTemplate = ItemsView.ItemTemplate.SelectDataTemplate(item, ItemsView);
+					if (dataTemplate is not null)
+					{
+						var cellOrientation = ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Vertical ? "v" : "h";
+						(Type cellType, var cellTypeReuseId) = DetermineTemplatedCellType();
 
-				return reuseId;
+						var reuseId = $"_{cellTypeReuseId}_{cellOrientation}_{dataTemplate.Id}";
+
+						if (!_cellReuseIds.Contains(reuseId))
+						{
+							CollectionView.RegisterClassForCell(cellType, new NSString(reuseId));
+							_cellReuseIds.Add(reuseId);
+						}
+
+						return reuseId;
+					}
+				}
 			}
 
 			return ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Horizontal
@@ -728,6 +756,8 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 				return;
 			}
 
+			_hasHandledEmptyReload = false;
+
 			// Get rid of the old view
 			TearDownEmptyView();
 
@@ -745,14 +775,17 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 				return;
 			}
 
-			if (isEmpty)
+			CoreFoundation.DispatchQueue.MainQueue.DispatchAsync(() =>
 			{
-				ShowEmptyView();
-			}
-			else
-			{
-				HideEmptyView();
-			}
+				if (isEmpty)
+				{
+					ShowEmptyView();
+				}
+				else
+				{
+					HideEmptyView();
+				}
+			});
 		}
 
 		void AlignEmptyView()
@@ -801,16 +834,22 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			}
 
 			_emptyUIView.Tag = EmptyTag;
-			CollectionView.AddSubview(_emptyUIView);
+
+			_emptyUIView.RemoveFromSuperview();
+			CollectionView.InsertSubview(_emptyUIView, 0);
 
 			if (((IElementController)ItemsView).LogicalChildren.IndexOf(_emptyViewFormsElement) == -1)
 			{
 				ItemsView.AddLogicalChild(_emptyViewFormsElement);
 			}
 
+			_emptyUIView.Frame = DetermineEmptyViewFrame();
+			_emptyUIView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+			_emptyUIView.SetNeedsLayout();
 			_emptyUIView.InvalidateMeasure();
 
 			AlignEmptyView();
+			CollectionView?.BringSubviewToFront(_emptyUIView);
 			_emptyViewDisplayed = true;
 		}
 
@@ -888,8 +927,14 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			UpdateTemplatedCell(templatedCell, indexPath);
 
 			// Keep this cell around, we can transfer the contents to the actual cell when the UICollectionView creates it
-			if (_measurementCells != null)
-				_measurementCells[ItemsSource[indexPath]] = templatedCell;
+			if (_measurementCells != null && ItemsSource.IsIndexPathValid(indexPath))
+			{
+				var item = ItemsSource[indexPath];
+				if (item is not null)
+				{
+					_measurementCells[item] = templatedCell;
+				}
+			}
 
 			return templatedCell;
 		}
