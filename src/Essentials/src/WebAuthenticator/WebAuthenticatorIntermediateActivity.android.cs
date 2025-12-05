@@ -79,5 +79,14 @@ namespace Microsoft.Maui.Authentication
 
 			activity.StartActivity(intermediateIntent);
 		}
+
+        public override void StartActivityForResult(Intent intent, int requestCode)
+        {
+            // Fix crash NullPointerException Attempt to invoke virtual method 'boolean android.content.Intent.migrateExtraStreamToClipData(android.content.Context)' on a null object reference
+            // https://stackoverflow.com/questions/38041230/intent-migrateextrastreamtoclipdata-on-a-null-object-reference
+            intent ??= new Intent();
+
+            base.StartActivityForResult(intent, requestCode);
+        }
 	}
 }

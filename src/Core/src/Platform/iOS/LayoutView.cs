@@ -1,10 +1,21 @@
 using CoreGraphics;
+using ObjCRuntime;
 using UIKit;
 
 namespace Microsoft.Maui.Platform
 {
 	public class LayoutView : MauiView
 	{
+		#pragma warning disable RS0016 // Add public types and members to the declared API
+		public LayoutView(NativeHandle handle) : base(handle)
+		#pragma warning restore RS0016 // Add public types and members to the declared API
+		{
+		}
+
+		public LayoutView()
+		{
+		}
+
 		bool _userInteractionEnabled;
 
 		public override void SubviewAdded(UIView uiview)

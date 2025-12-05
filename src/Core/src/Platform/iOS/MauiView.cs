@@ -15,6 +15,16 @@ namespace Microsoft.Maui.Platform
 	/// </summary>
 	public abstract class MauiView : UIView, ICrossPlatformLayoutBacking, IVisualTreeElementProvidable, IUIViewLifeCycleEvents, IPlatformMeasureInvalidationController
 	{
+#pragma warning disable RS0016 // Add public types and members to the declared API
+		public MauiView(NativeHandle handle) : base(handle)
+#pragma warning restore RS0016 // Add public types and members to the declared API
+		{
+		}
+
+		public MauiView()
+		{
+		}
+
 		/// <summary>
 		/// Flag indicating that parent views should be invalidated when this view is moved to a window.
 		/// This is used to trigger layout updates when the view hierarchy changes.
