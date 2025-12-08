@@ -122,6 +122,18 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 			base.ViewDidAppear(animated);
 		}
 
+#pragma warning disable RS0016 // Add public types and members to the declared API
+		public override void ViewWillAppear(bool animated)
+#pragma warning restore RS0016 // Add public types and members to the declared API
+		{
+			base.ViewWillAppear(animated);
+
+			if (Element is not null)
+			{
+				UpdateTabBarItems();
+			}
+		}
+
 		public override void ViewDidDisappear(bool animated)
 		{
 			base.ViewDidDisappear(animated);
@@ -190,7 +202,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 				UpdateTabBarItem(page);
 			}
 		}
-		
+
 		public override void TraitCollectionDidChange(UITraitCollection previousTraitCollection)
 		{
 			if (previousTraitCollection.VerticalSizeClass == TraitCollection.VerticalSizeClass)
