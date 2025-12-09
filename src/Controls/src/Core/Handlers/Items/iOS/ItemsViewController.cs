@@ -131,7 +131,6 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			return ItemsSource.ItemCountInGroup(section);
 		}
 
-		private bool _hasHandledEmptyReload = false;
 		void CheckForEmptySource()
 		{
 			var wasEmpty = _isEmpty;
@@ -140,13 +139,8 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 
 			if (_isEmpty)
 			{
-				_hasHandledEmptyReload = true;
 				_measurementCells?.Clear();
 				ItemsViewLayout?.ClearCellSizeCache();
-			}
-			else
-			{
-				_hasHandledEmptyReload = false;
 			}
 
 			if (wasEmpty != _isEmpty)
@@ -755,8 +749,6 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 			{
 				return;
 			}
-
-			_hasHandledEmptyReload = false;
 
 			// Get rid of the old view
 			TearDownEmptyView();
