@@ -218,7 +218,10 @@ public class TabbedPageManager
 
 	protected virtual void OnTabbedPageDisappearing(object sender, EventArgs e)
 	{
-		RemoveTabs();
+		// Reset the content bottom margin when navigating away from the tabbed page
+		// This ensures subsequent pages can use the full screen height
+		// We don't remove the tabs themselves to avoid issues with modal navigation
+		SetContentBottomMargin(0);
 	}
 
 	protected virtual void OnTabbedPageAppearing(object sender, EventArgs e)
