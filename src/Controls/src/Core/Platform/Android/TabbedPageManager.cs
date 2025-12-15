@@ -257,18 +257,20 @@ public class TabbedPageManager
 		if (IsBottomTabPlacement)
 		{
 			id = Resource.Id.navigationlayout_bottomtabs;
-			if (_tabplacementId == id)
-				return;
 
 			SetContentBottomMargin(_context.Context.Resources.GetDimensionPixelSize(Resource.Dimension.design_bottom_navigation_height));
+
+			if (_tabplacementId == id)
+				return;
 		}
 		else
 		{
 			id = Resource.Id.navigationlayout_toptabs;
-			if (_tabplacementId == id)
-				return;
 
 			SetContentBottomMargin(0);
+
+			if (_tabplacementId == id)
+				return;
 		}
 
 		if (_context?.Context is Context c)
