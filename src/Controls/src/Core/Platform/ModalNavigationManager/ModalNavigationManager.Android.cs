@@ -239,6 +239,17 @@ namespace Microsoft.Maui.Controls.Platform
 					dialog.Window.SetSoftInputMode(attributes.SoftInputMode);
 				}
 
+				if (!OperatingSystem.IsAndroidVersionAtLeast(35))
+				{
+					// Set BarColor to Transparent
+					dialog.Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
+					dialog.Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
+#pragma warning disable CA1422 // Validate platform compatibility
+					dialog.Window.SetStatusBarColor(AColor.Transparent);
+					dialog.Window.SetNavigationBarColor(AColor.Transparent);
+#pragma warning restore CA1422 // Validate platform compatibility
+				}
+
 				// Configure translucent system bars for modal pages on Android API 30+
 				if (OperatingSystem.IsAndroidVersionAtLeast(30) && Context?.GetActivity() is global::Android.App.Activity activity)
 				{

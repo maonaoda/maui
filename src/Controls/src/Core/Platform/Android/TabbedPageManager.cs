@@ -178,7 +178,9 @@ public class TabbedPageManager
 		Element.Arrange(e);
 	}
 
-	void RemoveTabs()
+#pragma warning disable RS0016 // Add public types and members to the declared API
+	protected virtual void RemoveTabs()
+#pragma warning restore RS0016 // Add public types and members to the declared API
 	{
 		_pendingFragment?.Dispose();
 		_pendingFragment = null;
@@ -300,7 +302,9 @@ public class TabbedPageManager
 		}
 	}
 
-	void SetContentBottomMargin(int bottomMargin)
+#pragma warning disable RS0016 // Add public types and members to the declared API
+	protected void SetContentBottomMargin(int bottomMargin)
+#pragma warning restore RS0016 // Add public types and members to the declared API
 	{
 		var rootManager = _context.GetNavigationRootManager();
 		var layoutContent = rootManager.RootView?.FindViewById(Resource.Id.navigationlayout_content);
