@@ -88,6 +88,11 @@ namespace Microsoft.Maui.Controls
 		}
 
 		partial void OnHandlerChangingPartial(HandlerChangingEventArgs args);
+#pragma warning disable RS0016 // Add public types and members to the declared API
+		public virtual void NewOnHandlerChangingPartial(HandlerChangingEventArgs args)
+		{
+		}
+#pragma warning restore RS0016 // Add public types and members to the declared API
 		private protected override void OnHandlerChangingCore(HandlerChangingEventArgs args)
 		{
 			base.OnHandlerChangingCore(args);
@@ -103,6 +108,7 @@ namespace Microsoft.Maui.Controls
 				WireUnwireChanges(true);
 			}
 
+			NewOnHandlerChangingPartial(args);
 			OnHandlerChangingPartial(args);
 			void OnPagesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 			{
