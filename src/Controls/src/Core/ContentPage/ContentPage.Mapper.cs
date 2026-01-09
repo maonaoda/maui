@@ -37,9 +37,16 @@ namespace Microsoft.Maui.Controls
 
 		void UpdateHideSoftInputOnTapped()
 		{
-			Handler
-				?.GetService<HideSoftInputOnTappedChangedManager>()
-				?.UpdatePage(this);
+			try
+			{
+				Handler
+					?.GetService<HideSoftInputOnTappedChangedManager>()
+					?.UpdatePage(this);
+			}
+			catch (Exception)
+			{
+				// avoid NRE on IServiceProvider
+			}
 		}
 	}
 }

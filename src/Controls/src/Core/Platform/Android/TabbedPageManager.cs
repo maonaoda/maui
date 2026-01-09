@@ -190,28 +190,36 @@ public class TabbedPageManager
 			var fragment = _tabLayoutFragment;
 			_tabLayoutFragment = null;
 
-			var fragmentManager =
-				_context
-					.GetNavigationRootManager()
-					.FragmentManager;
-
-			if (!fragmentManager.IsDestroyed(_context?.Context))
+			try
 			{
-				SetContentBottomMargin(0);
 
-				if (_context?.Context is Context c)
+				var fragmentManager =
+					_context
+						.GetNavigationRootManager()
+						.FragmentManager;
+
+				if (!fragmentManager.IsDestroyed(_context?.Context))
 				{
-					_pendingFragment =
-						fragmentManager
-							.RunOrWaitForResume(c, fm =>
-							{
-								fm
-									.BeginTransaction()
-									.Remove(fragment)
-									.SetReorderingAllowed(true)
-									.Commit();
-							});
+					SetContentBottomMargin(0);
+
+					if (_context?.Context is Context c)
+					{
+						_pendingFragment =
+							fragmentManager
+								.RunOrWaitForResume(c, fm =>
+								{
+									fm
+										.BeginTransaction()
+										.Remove(fragment)
+										.SetReorderingAllowed(true)
+										.Commit();
+								});
+					}
 				}
+			}
+			catch (Exception)
+			{
+				// avoid NRE on IServiceProvider
 			}
 
 			_tabplacementId = 0;
