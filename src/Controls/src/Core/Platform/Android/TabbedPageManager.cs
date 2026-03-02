@@ -533,6 +533,8 @@ public class TabbedPageManager
 
 		if (Element.CurrentPage == null && Element.Children.Count > 0)
 			Element.CurrentPage = Element.Children[0];
+
+		UpdateTabItemStyle(true);
 	}
 
 	protected virtual void UpdateTabIcons()
@@ -802,6 +804,9 @@ public class TabbedPageManager
 
 		if (IsBottomTabPlacement)
 		{
+			if (_bottomNavigationView.Menu.Size() != Element.Children.Count)
+				return;
+
 			for (int i = 0; i < _bottomNavigationView.Menu.Size(); i++)
 			{
 				var menuItem = _bottomNavigationView.Menu.GetItem(i);
@@ -828,7 +833,7 @@ public class TabbedPageManager
 		// Currently, there is no modern API that provides the desired behavior.
 		// Therefore, the obsolete `BottomNavigationItemView` approach is used.
 #pragma warning disable XAOBS001 // Type or member is obsolete
-		if (_bottomNavigationView.GetChildAt(0) is BottomNavigationMenuView menuView)
+		if (_bottomNavigationView.MenuView is BottomNavigationMenuView menuView)
 		{
 			var itemView = menuView.GetChildAt(i) as BottomNavigationItemView;
 
@@ -842,13 +847,13 @@ public class TabbedPageManager
 #pragma warning restore XAOBS001 // Type or member is obsolete
 	}
 
-	protected virtual void UpdateStyleForTabItem()
+	protected virtual void UpdateStyleForTabItem(bool forceUpdate = false)
 	{
 		Color barItemColor = BarItemColor;
 		Color barTextColor = Element.BarTextColor;
 		Color barSelectedItemColor = BarSelectedItemColor;
 
-		if (_tabItemStyleLoaded &&
+		if (!forceUpdate && _tabItemStyleLoaded &&
 			_currentBarItemColor == barItemColor &&
 			_currentBarTextColor == barTextColor &&
 			_currentBarSelectedItemColor == barSelectedItemColor)
@@ -865,9 +870,9 @@ public class TabbedPageManager
 		UpdateItemIconColor();
 	}
 
-	internal void UpdateTabItemStyle()
+	internal void UpdateTabItemStyle(bool forceUpdate = false)
 	{
-		UpdateStyleForTabItem();
+		UpdateStyleForTabItem(forceUpdate);
 	}
 
 	void UpdateBarTextColor()
