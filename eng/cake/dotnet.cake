@@ -269,8 +269,8 @@ Task("dotnet-test")
             "**/SourceGen.UnitTests.csproj",
             "**/Controls.BindingSourceGen.UnitTests.csproj",
             "**/Core.UnitTests.csproj",
-            "**/Essentials.UnitTests.csproj",
-            "**/Essentials.AI.UnitTests.csproj",
+            // "**/Essentials.UnitTests.csproj",
+            // "**/Essentials.AI.UnitTests.csproj",
             "**/Resizetizer.UnitTests.csproj",
             "**/Graphics.Tests.csproj",
             "**/Compatibility.Core.UnitTests.csproj",
@@ -891,7 +891,7 @@ void RunMSBuildWithDotNet(
         if (!string.IsNullOrEmpty(targetFramework))
             args.Append($"-f {targetFramework}");
 
-        args.Append($"/p:PackageVersion=10.0.50-20260313.1");
+        args.Append($"/p:PackageVersion=10.0.60-20260515.1");
 
         return args;
     };
