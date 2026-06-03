@@ -65,6 +65,8 @@ namespace Microsoft.Maui.Controls
 				}
 				else
 				{
+					SendUnloaded(false);
+
 					// Not yet attached to a native parent; wait for the platform loaded event
 					_loadedUnloadedToken?.Dispose();
 					_loadedUnloadedToken = null;

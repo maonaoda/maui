@@ -218,7 +218,7 @@ Task("uitests-apphost")
             properties.Add("_UseNativeAot", "true");
             properties.Add("RuntimeIdentifier", "iossimulator-x64");
         }
-        
+
         var useMaterial3 = Argument("usematerial3", false);
         if (useMaterial3)
         {
@@ -724,12 +724,12 @@ void SetDotNetEnvironmentVariables(string dotnetDir = null)
 {
     var dotnet = dotnetDir ?? MakeAbsolute(Directory("./.dotnet/")).ToString();
     var dotnetHostPath = IsRunningOnWindows() ? $"{dotnet}/dotnet.exe" : $"{dotnet}/dotnet";
-  
+
     SetEnvironmentVariable("VSDebugger_ValidateDotnetDebugLibSignatures", "0");
     SetEnvironmentVariable("DOTNET_INSTALL_DIR", dotnet);
     SetEnvironmentVariable("DOTNET_ROOT", dotnet);
     if (IsRunningOnWindows())
-    { 
+    {
         //workaround for dev18 
         SetEnvironmentVariable("DOTNET_HOST_PATH", dotnetHostPath);
     }
@@ -891,7 +891,7 @@ void RunMSBuildWithDotNet(
         if (!string.IsNullOrEmpty(targetFramework))
             args.Append($"-f {targetFramework}");
 
-        args.Append($"/p:PackageVersion=10.0.70-20260525.1");
+        args.Append($"/p:PackageVersion=10.0.70-20260528.1");
 
         return args;
     };
@@ -954,18 +954,18 @@ void RunTestWithLocalDotNet(string csproj, string config, string pathDotnet = nu
         ResultsDirectory = GetTestResultsDirectory(),
         //    Verbosity = Cake.Common.Tools.DotNetCore.DotNetCoreVerbosity.Diagnostic,
 
-        ArgumentCustomization = args => 
-        { 
+        ArgumentCustomization = args =>
+        {
             var loggerArg = GetMSBuildForwardingLoggerPath();
             if (loggerArg != null)
             {
-               args.Append(loggerArg);
+                args.Append(loggerArg);
             }
 
             args.Append($"-bl:{binlog}");
-            if(maxCpuCount > 0)
+            if (maxCpuCount > 0)
             {
-               args.Append($"-maxcpucount:{maxCpuCount}");
+                args.Append($"-maxcpucount:{maxCpuCount}");
             }
 
             if (argsExtra != null)
